@@ -50,6 +50,7 @@
   <ItemGroup>
     <Compile Include="RemoteExplorerProxy.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SignalRProxyBase.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

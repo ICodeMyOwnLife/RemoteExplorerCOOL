@@ -1,12 +1,16 @@
-﻿<Window x:Class="RemoteExplorerWindowClient.RemoteExplorerWindowClientMainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:RemoteExplorerWindowClient"
-        mc:Ignorable="d"
-        Title="RemoteExplorerWindowClientMainWindow" Height="350" Width="525">
-
+﻿<mah:MetroWindow x:Class="RemoteExplorerWindowClient.RemoteExplorerWindowClientMainWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:local="clr-namespace:RemoteExplorerWindowClient"
+                 xmlns:mds="http://materialdesigninxaml.net/winfx/xaml/themes"
+                 xmlns:inf="clr-namespace:RemoteExplorerInfrastructure;assembly=RemoteExplorerInfrastructure"
+                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                 xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 mc:Ignorable="d"
+                 Title="RemoteExplorerWindowClientMainWindow"
+                 Height="350" Width="525" TitleCaps="False">
     <Window.DataContext>
         <local:RemoteExplorerWindowClientViewModel />
     </Window.DataContext>
@@ -22,15 +26,16 @@
 
         <Button Grid.Row="0" Content="Connect" Command="{Binding ConnectAsyncCommand}" />
 
-        <TextBox Grid.Row="1" Text="{Binding SelectedEntry, UpdateSourceTrigger=PropertyChanged}" />
+        <TextBox Grid.Row="1" Text="{Binding SelectedEntry.Name, Mode=OneWay}" />
 
         <ListBox Grid.Row="2"
                  ItemsSource="{Binding Entries}"
-                 SelectedItem="{Binding SelectedEntry}" />
+                 SelectedItem="{Binding SelectedEntry}"
+                 ItemTemplateSelector="{StaticResource FileSystemExtryDateTemplateSelector}" />
 
 
         <Button Grid.Row="3" Content="Enumerate" Command="{Binding EnumerateFolderAsyncCommand}" />
 
         <TextBlock Grid.Row="4" Text="{Binding State}" />
     </Grid>
-</Window>
+</mah:MetroWindow>

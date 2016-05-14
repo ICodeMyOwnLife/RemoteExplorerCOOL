@@ -84,6 +84,7 @@
     <Compile Include="RemoteExplorerHub.cs" />
     <Compile Include="RemoteExplorerService.cs" />
     <Compile Include="RemoteExplorerStartup.cs" />
+    <Compile Include="SignalRServiceBase.cs" />
     <Compile Include="SignalRServiceState.cs" />
   </ItemGroup>
   <ItemGroup>
