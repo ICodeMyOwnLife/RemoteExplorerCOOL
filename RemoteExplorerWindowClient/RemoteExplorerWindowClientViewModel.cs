@@ -29,7 +29,8 @@ namespace RemoteExplorerWindowClient
 
         public ICommand EnumerateFolderAsyncCommand
             =>
-                GetCommand(ref _enumerateFolderAsyncCommand, async _ => await EnumerateFolderAsync()
+                GetCommand(ref _enumerateFolderAsyncCommand,
+                    async par => await EnumerateFolderAsync(par as FileSystemEntryBase ?? SelectedEntry)
                     /*, _ => CanEnumerateFolder*/);
 
         public FileSystemEntryBase SelectedEntry
@@ -41,11 +42,14 @@ namespace RemoteExplorerWindowClient
 
 
         #region Methods
-        public async Task EnumerateFolderAsync()
+        public async Task EnumerateFolderAsync(FileSystemEntryBase entry)
         {
-            await _proxy.EnumerateFolder(SelectedEntry);
+            await _proxy.EnumerateFolder(entry);
             Entries = _proxy.Entries;
         }
         #endregion
     }
 }
+
+
+// TODO: Add Enter / DoubleClick command
