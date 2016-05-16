@@ -1,16 +1,15 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
-using CB.Model.Common;
+using CB.Model.Prism;
+using Microsoft.Practices.Prism.Commands;
 using RemoteExplorerClientInfrastructure;
 
 
 namespace RemoteExplorerWindowClient
 {
-    public class SignalRClientViewModelBase<TSignalRProxy>: ViewModelBase where TSignalRProxy: SignalRProxyBase
+    public class SignalRClientViewModelBase<TSignalRProxy>: PrismViewModelBase where TSignalRProxy: SignalRProxyBase
     {
         #region Fields
-        protected ICommand _connectAsyncCommand;
-        private ICommand _disconnectCommand;
         protected readonly TSignalRProxy _proxy;
         #endregion
 
@@ -20,16 +19,16 @@ namespace RemoteExplorerWindowClient
         {
             _proxy = proxy;
             _proxy.Error += Proxy_Error;
+            ConnectAsyncCommand = DelegateCommand.FromAsyncHandler(ConnectAsync);
+            DisconnectCommand = new DelegateCommand(Disconnect);
         }
         #endregion
 
 
         #region  Properties & Indexers
-        public ICommand ConnectAsyncCommand
-            => GetCommand(ref _connectAsyncCommand, async _ => await ConnectAsync() /*, _ => CanConnect*/);
+        public ICommand ConnectAsyncCommand { get; }
 
-        public ICommand DisconnectCommand
-            => GetCommand(ref _disconnectCommand, _ => Disconnect() /*, _ => CanDisconnect*/);
+        public ICommand DisconnectCommand { get; }
         #endregion
 
 
@@ -42,7 +41,7 @@ namespace RemoteExplorerWindowClient
         #region Event Handlers
         private void Proxy_Error(object sender, string e)
         {
-            State = e;
+            NotifyError(e);
         }
         #endregion
     }

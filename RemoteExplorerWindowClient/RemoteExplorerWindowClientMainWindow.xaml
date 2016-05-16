@@ -4,11 +4,8 @@
                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                  xmlns:local="clr-namespace:RemoteExplorerWindowClient"
-                 xmlns:mds="http://materialdesigninxaml.net/winfx/xaml/themes"
                  xmlns:inf="clr-namespace:RemoteExplorerInfrastructure;assembly=RemoteExplorerInfrastructure"
-                 xmlns:sys="clr-namespace:System;assembly=mscorlib"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
-                 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                  mc:Ignorable="d"
                  Title="RemoteExplorerWindowClientMainWindow"
                  Height="350" Width="525" TitleCaps="False">
@@ -17,31 +14,44 @@
         <local:RemoteExplorerWindowClientViewModel x:Key="ViewModel" />
 
         <DataTemplate x:Key="FileEntryDataTemplate" DataType="inf:FileSystemEntryBase">
-            <TextBlock>
-                <InlineUIContainer>
-                    <Rectangle OpacityMask="{StaticResource FileBrush}" Style="{StaticResource IconStyle}" />
-                </InlineUIContainer>
-                <Run Text="{Binding Name}" />
-            </TextBlock>
+            <DockPanel>
+                <Rectangle DockPanel.Dock="Left"
+                           OpacityMask="{StaticResource FileBrush}"
+                           Style="{StaticResource IconStyle}" />
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                <DockPanel.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick"
+                                  Command="{Binding Source={StaticResource ViewModel}, Path=OpenFileAsyncCommand}"
+                                  CommandParameter="{Binding}" />
+                </DockPanel.InputBindings>
+            </DockPanel>
         </DataTemplate>
 
         <DataTemplate x:Key="FolderEntryDataTemplate" DataType="inf:FileSystemEntryBase">
-            <TextBlock>
+            <DockPanel>
+                <Rectangle DockPanel.Dock="Left"
+                           OpacityMask="{StaticResource FolderBrush}"
+                           Style="{StaticResource IconStyle}" />
+                <TextBlock Text="{Binding Name}" VerticalAlignment="Center" />
+                <DockPanel.InputBindings>
+                    <MouseBinding MouseAction="LeftDoubleClick"
+                                  Command="{Binding Source={StaticResource ViewModel}, Path=OpenFolderAsyncCommand}"
+                                  CommandParameter="{Binding}" />
+                </DockPanel.InputBindings>
+            </DockPanel>
+            <!--<TextBlock>
                 <InlineUIContainer>
                     <Rectangle OpacityMask="{StaticResource FolderBrush}" Style="{StaticResource IconStyle}" />
                 </InlineUIContainer>
-                
-                <Run Text="{Binding Name}" />
-                
+
+                <Run Text="{Binding Name}" BaselineAlignment="Center" />
+
                 <TextBlock.InputBindings>
-                    <KeyBinding Key="Enter"
-                                Command="{Binding Source={StaticResource ViewModel}, Path=EnumerateFolderAsyncCommand}"
-                                CommandParameter="{Binding}" />
                     <MouseBinding Gesture="LeftDoubleClick"
                                   Command="{Binding Source={StaticResource ViewModel}, Path=EnumerateFolderAsyncCommand}"
                                   CommandParameter="{Binding}" />
                 </TextBlock.InputBindings>
-            </TextBlock>
+            </TextBlock>-->
         </DataTemplate>
 
         <local:FileSystemExtryDataTemplateSelector x:Key="FileSystemExtryDateTemplateSelector" />
@@ -67,11 +77,16 @@
         <ListBox Grid.Row="2"
                  ItemsSource="{Binding Entries}"
                  SelectedItem="{Binding SelectedEntry}"
-                 ItemTemplateSelector="{StaticResource FileSystemExtryDateTemplateSelector}" />
+                 ItemTemplateSelector="{StaticResource FileSystemExtryDateTemplateSelector}">
+            <ListBox.InputBindings>
+                <KeyBinding Key="Back" Command="{Binding UpFolderAsyncCommand}" />
+                <KeyBinding Key="Enter" Command="{Binding OpenEntryAsyncCommand}" />
+            </ListBox.InputBindings>
+        </ListBox>
 
 
-        <Button Grid.Row="3" Content="Enumerate" Command="{Binding EnumerateFolderAsyncCommand}" />
+        <Button Grid.Row="3" Content="Enumerate" Command="{Binding OpenFolderAsyncCommand}" />
 
-        <TextBlock Grid.Row="4" Text="{Binding State}" />
+        <!--<TextBlock Grid.Row="4" Text="{Binding State}" />-->
     </Grid>
 </mah:MetroWindow>
