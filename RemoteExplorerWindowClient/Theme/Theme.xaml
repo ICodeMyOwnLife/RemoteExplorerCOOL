@@ -29,24 +29,4 @@
     <VisualBrush x:Key="FileBrush" Stretch="Fill" Visual="{StaticResource appbar_clipboard_file}" />
 
     <VisualBrush x:Key="FolderBrush" Stretch="Fill" Visual="{StaticResource appbar_folder}" />
-
-    <DataTemplate x:Key="FileEntryDataTemplate" DataType="inf:FileSystemEntryBase">
-        <DockPanel>
-            <!--<mds:PackIcon DockPanel.Dock="Left" Width="{StaticResource IconSize}"
-                              Height="{StaticResource IconSize}" Kind="File" />-->
-            <Rectangle OpacityMask="{StaticResource FileBrush}" Style="{StaticResource IconStyle}" />
-            <TextBlock Text="{Binding Name}" />
-        </DockPanel>
-    </DataTemplate>
-
-    <DataTemplate x:Key="FolderEntryDataTemplate" DataType="inf:FileSystemEntryBase">
-        <DockPanel>
-            <!--<mds:PackIcon DockPanel.Dock="Left" Width="{StaticResource IconSize}"
-                              Height="{StaticResource IconSize}" Kind="Folder" />-->
-            <Rectangle OpacityMask="{StaticResource FolderBrush}" Style="{StaticResource IconStyle}" />
-            <TextBlock Text="{Binding Name}" />
-        </DockPanel>
-    </DataTemplate>
-
-    <local:FileSystemExtryDataTemplateSelector x:Key="FileSystemExtryDateTemplateSelector" />
 </ResourceDictionary>

@@ -8,11 +8,47 @@
                  xmlns:inf="clr-namespace:RemoteExplorerInfrastructure;assembly=RemoteExplorerInfrastructure"
                  xmlns:sys="clr-namespace:System;assembly=mscorlib"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
                  mc:Ignorable="d"
                  Title="RemoteExplorerWindowClientMainWindow"
                  Height="350" Width="525" TitleCaps="False">
+
+    <Window.Resources>
+        <local:RemoteExplorerWindowClientViewModel x:Key="ViewModel" />
+
+        <DataTemplate x:Key="FileEntryDataTemplate" DataType="inf:FileSystemEntryBase">
+            <TextBlock>
+                <InlineUIContainer>
+                    <Rectangle OpacityMask="{StaticResource FileBrush}" Style="{StaticResource IconStyle}" />
+                </InlineUIContainer>
+                <Run Text="{Binding Name}" />
+            </TextBlock>
+        </DataTemplate>
+
+        <DataTemplate x:Key="FolderEntryDataTemplate" DataType="inf:FileSystemEntryBase">
+            <TextBlock>
+                <InlineUIContainer>
+                    <Rectangle OpacityMask="{StaticResource FolderBrush}" Style="{StaticResource IconStyle}" />
+                </InlineUIContainer>
+                
+                <Run Text="{Binding Name}" />
+                
+                <TextBlock.InputBindings>
+                    <KeyBinding Key="Enter"
+                                Command="{Binding Source={StaticResource ViewModel}, Path=EnumerateFolderAsyncCommand}"
+                                CommandParameter="{Binding}" />
+                    <MouseBinding Gesture="LeftDoubleClick"
+                                  Command="{Binding Source={StaticResource ViewModel}, Path=EnumerateFolderAsyncCommand}"
+                                  CommandParameter="{Binding}" />
+                </TextBlock.InputBindings>
+            </TextBlock>
+        </DataTemplate>
+
+        <local:FileSystemExtryDataTemplateSelector x:Key="FileSystemExtryDateTemplateSelector" />
+    </Window.Resources>
+
     <Window.DataContext>
-        <local:RemoteExplorerWindowClientViewModel />
+        <StaticResource ResourceKey="ViewModel" />
     </Window.DataContext>
 
     <Grid>
