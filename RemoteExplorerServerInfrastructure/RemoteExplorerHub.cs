@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNet.SignalR;
 using RemoteExplorerInfrastructure;
 
@@ -11,37 +10,59 @@ namespace RemoteExplorerServerInfrastructure
     public class RemoteExplorerHub: Hub
     {
         #region Methods
-        public void EnumerateFolder(FileSystemEntryBase folder)
+        public void OpenFolder(FileSystemEntry folderEntry)
         {
-            var folderPath = folder.FullPath;
-            if (!folder.IsFolderEntry)
+            try
             {
-                Clients.Caller.error($"{folderPath} is not a folder.");
+                Clients.Caller.openFolder(GetFolderContent(folderEntry));
             }
-            else
+            catch (Exception exception)
             {
-                var entryPaths = folderPath == ""
-                                     ? Directory.GetLogicalDrives().Where(Directory.Exists) : Directory.GetFileSystemEntries(folderPath);
-                try
-                {
-                    var entries = entryPaths.Select(FileSystemEntryBase.CreateEntry).ToArray();
-                Clients.Caller.enumerateFolder(entries);
-                }
-                catch (Exception)
-                {
-                    
-                }
+                Clients.Caller.error(exception.Message);
             }
         }
         #endregion
 
 
-        #region Override
-        public override Task OnConnected()
+        #region Implementation
+        private FolderContent GetFolderContent(FileSystemEntry folderEntry)
         {
-            //EnumerateFolder(FileSystemEntryBase.CreateEntry(""));
-            return base.OnConnected();
+            if (folderEntry.IsRoot()) return GetRootContent();
+            var folderPath = folderEntry.FullPath;
+            if (!folderEntry.IsFolderEntry)
+            {
+                Clients.Caller.error($"{folderPath} is not a folder.");
+                return null;
+            }
+            return new FolderContent
+            {
+                Folder = (FolderEntry)folderEntry,
+                Parent = GetParent(folderEntry),
+                Content =
+                    Directory.EnumerateDirectories(folderPath).Concat(
+                        Directory.EnumerateFiles(folderPath)).Select(FileSystemEntry.CreateEntry)
+                             .ToArray()
+            };
         }
+
+        private static FolderEntry GetParent(FileSystemEntry entry)
+        {
+            if (entry.IsRoot()) return null;
+
+            var parentFolder = Path.GetDirectoryName(entry.FullPath);
+            return (FolderEntry)(string.IsNullOrEmpty(parentFolder)
+                                     ? FileSystemEntry.Root : FileSystemEntry.CreateEntry(parentFolder));
+        }
+
+        private static FolderContent GetRootContent()
+            => new FolderContent
+            {
+                Parent = null,
+                Folder = (FolderEntry)FileSystemEntry.Root,
+                Content =
+                    Directory.GetLogicalDrives().Where(Directory.Exists).Select(FileSystemEntry.CreateEntry).ToArray
+                        ()
+            };
         #endregion
     }
 }

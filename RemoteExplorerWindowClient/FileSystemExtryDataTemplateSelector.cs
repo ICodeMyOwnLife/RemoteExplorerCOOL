@@ -11,7 +11,7 @@ namespace RemoteExplorerWindowClient
         public override DataTemplate SelectTemplate(object item, DependencyObject container)
         {
             var element = container as FrameworkElement;
-            var fileSystemEntry = item as FileSystemEntryBase;
+            var fileSystemEntry = item as FileSystemEntry;
             return fileSystemEntry?.IsFileEntry == true ? element?.FindResource("FileEntryDataTemplate") as DataTemplate
                        : element?.FindResource("FolderEntryDataTemplate") as DataTemplate;
         }

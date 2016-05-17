@@ -1,57 +1,33 @@
-﻿using System.Threading.Tasks;
-using System.Windows.Input;
-using CB.Model.Common;
+﻿using System;
 using RemoteExplorerServerInfrastructure;
 
 
 namespace RemoteExplorerWindowServer
 {
-    public abstract class SignalRServerViewModelBase<TSignalRService>: ViewModelBase
-        where TSignalRService: SignalRServiceBase
+    public class RemoteExplorerWindowServerViewModel: SignalRServerViewModelBase<RemoteExplorerService>
     {
         #region Fields
-        protected readonly TSignalRService _service;
-        private ICommand _startServiceAsyncCommand;
-        private ICommand _stopServiceCommand;
+        private string _state;
         #endregion
 
 
         #region  Constructors & Destructor
-        protected SignalRServerViewModelBase(TSignalRService service)
-        {
-            _service = service;
-        }
+        public RemoteExplorerWindowServerViewModel(): base(new RemoteExplorerService()) { }
         #endregion
 
 
         #region  Properties & Indexers
-        public bool CanStartService => _service.CanStart;
-        public bool CanStopService => _service.CanStop;
-
-        public ICommand StartServiceAsyncCommand
-            => GetCommand(ref _startServiceAsyncCommand, async _ => await StartServiceAsync(), _ => CanStartService);
-
-        public ICommand StopServiceCommand
-            => GetCommand(ref _stopServiceCommand, _ => StopService(), _ => CanStopService);
-        #endregion
-
-
-        #region Methods
-        public async Task StartServiceAsync()
+        public string State
         {
-            State = "Connecting...";
-            State = await _service.Start() ? $"Connected to {_service.Url}" : _service.Error;
+            get { return _state; }
+            private set { SetProperty(ref _state, value); }
         }
-
-        public void StopService()
-            => State = _service.Stop() ? "Disconnected" : _service.Error;
         #endregion
-    }
 
-    public class RemoteExplorerWindowServerViewModel: SignalRServerViewModelBase<RemoteExplorerService>
-    {
-        #region  Constructors & Destructor
-        public RemoteExplorerWindowServerViewModel(): base(new RemoteExplorerService()) { }
+
+        #region Override
+        public override void Log(string logContent)
+            => State = string.IsNullOrEmpty(State) ? logContent : State + Environment.NewLine + logContent;
         #endregion
     }
 }

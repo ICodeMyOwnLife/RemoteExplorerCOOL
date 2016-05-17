@@ -6,6 +6,8 @@
                  xmlns:local="clr-namespace:RemoteExplorerWindowClient"
                  xmlns:inf="clr-namespace:RemoteExplorerInfrastructure;assembly=RemoteExplorerInfrastructure"
                  xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
+                 xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
+                 xmlns:prm="http://prismlibrary.com/"
                  mc:Ignorable="d"
                  Title="RemoteExplorerWindowClientMainWindow"
                  Height="350" Width="525" TitleCaps="False">
@@ -13,7 +15,7 @@
     <Window.Resources>
         <local:RemoteExplorerWindowClientViewModel x:Key="ViewModel" />
 
-        <DataTemplate x:Key="FileEntryDataTemplate" DataType="inf:FileSystemEntryBase">
+        <DataTemplate x:Key="FileEntryDataTemplate" DataType="inf:FileSystemEntry">
             <DockPanel>
                 <Rectangle DockPanel.Dock="Left"
                            OpacityMask="{StaticResource FileBrush}"
@@ -27,7 +29,7 @@
             </DockPanel>
         </DataTemplate>
 
-        <DataTemplate x:Key="FolderEntryDataTemplate" DataType="inf:FileSystemEntryBase">
+        <DataTemplate x:Key="FolderEntryDataTemplate" DataType="inf:FileSystemEntry">
             <DockPanel>
                 <Rectangle DockPanel.Dock="Left"
                            OpacityMask="{StaticResource FolderBrush}"
@@ -39,19 +41,6 @@
                                   CommandParameter="{Binding}" />
                 </DockPanel.InputBindings>
             </DockPanel>
-            <!--<TextBlock>
-                <InlineUIContainer>
-                    <Rectangle OpacityMask="{StaticResource FolderBrush}" Style="{StaticResource IconStyle}" />
-                </InlineUIContainer>
-
-                <Run Text="{Binding Name}" BaselineAlignment="Center" />
-
-                <TextBlock.InputBindings>
-                    <MouseBinding Gesture="LeftDoubleClick"
-                                  Command="{Binding Source={StaticResource ViewModel}, Path=EnumerateFolderAsyncCommand}"
-                                  CommandParameter="{Binding}" />
-                </TextBlock.InputBindings>
-            </TextBlock>-->
         </DataTemplate>
 
         <local:FileSystemExtryDataTemplateSelector x:Key="FileSystemExtryDateTemplateSelector" />
@@ -60,6 +49,12 @@
     <Window.DataContext>
         <StaticResource ResourceKey="ViewModel" />
     </Window.DataContext>
+
+    <i:Interaction.Triggers>
+        <prm:InteractionRequestTrigger SourceObject="{Binding NotificationRequest}">
+            <prm:PopupWindowAction IsModal="True" CenterOverAssociatedObject="True" />
+        </prm:InteractionRequestTrigger>
+    </i:Interaction.Triggers>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -72,10 +67,10 @@
 
         <Button Grid.Row="0" Content="Connect" Command="{Binding ConnectAsyncCommand}" />
 
-        <TextBox Grid.Row="1" Text="{Binding SelectedEntry.Name, Mode=OneWay}" />
+        <TextBlock Grid.Row="1" Text="{Binding FolderContent.Folder.FullPath, Mode=OneWay}" />
 
         <ListBox Grid.Row="2"
-                 ItemsSource="{Binding Entries}"
+                 ItemsSource="{Binding FolderContent.Content}"
                  SelectedItem="{Binding SelectedEntry}"
                  ItemTemplateSelector="{StaticResource FileSystemExtryDateTemplateSelector}">
             <ListBox.InputBindings>

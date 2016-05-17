@@ -13,19 +13,18 @@ namespace RemoteExplorerClientInfrastructure
 
 
         #region  Properties & Indexers
-        public FileSystemEntryBase[] Entries { get; private set; }
-
         public string File { get; private set; }
+        public FolderContent FolderContent { get; private set; }
         #endregion
 
 
         #region Methods
-        public async Task EnumerateFolder(FileSystemEntryBase folderEntry)
+        public async Task OpenFolder(FileSystemEntry folderEntry)
         {
-            await _hubProxy.Invoke("EnumerateFolder", folderEntry);
+            await _hubProxy.Invoke("OpenFolder", folderEntry);
         }
 
-        public async Task GetFile(FileSystemEntryBase fileEntry)
+        public async Task GetFile(FileSystemEntry fileEntry)
         {
             await Task.Delay(50);
             File = @"D:\a.txt";
@@ -37,7 +36,10 @@ namespace RemoteExplorerClientInfrastructure
         protected override void InitializeProxy()
         {
             base.InitializeProxy();
-            _hubProxy.On<FileSystemEntryBase[]>("enumerateFolder", entries => { Entries = entries; });
+            _hubProxy.On<FolderContent>("openFolder", folderContent =>
+            {
+                FolderContent = folderContent;
+            });
         }
         #endregion
     }
