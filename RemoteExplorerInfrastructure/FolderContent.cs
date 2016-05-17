@@ -4,8 +4,8 @@
     {
         #region  Properties & Indexers
         public FileSystemEntry[] Content { get; set; }
-        public FolderEntry Folder { get; set; }
-        public FolderEntry Parent { get; set; }
+        public FileSystemEntry Folder { get; set; }
+        public FileSystemEntry Parent { get; set; }
         #endregion
     }
 }

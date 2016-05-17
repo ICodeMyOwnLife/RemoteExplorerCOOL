@@ -29,39 +29,38 @@ namespace RemoteExplorerServerInfrastructure
         {
             if (folderEntry.IsRoot()) return GetRootContent();
             var folderPath = folderEntry.FullPath;
-            if (!folderEntry.IsFolderEntry)
+            if (folderEntry.Kind != FileSystemKind.Folder)
             {
                 Clients.Caller.error($"{folderPath} is not a folder.");
                 return null;
             }
             return new FolderContent
             {
-                Folder = (FolderEntry)folderEntry,
+                Folder = folderEntry,
                 Parent = GetParent(folderEntry),
-                Content =
-                    Directory.EnumerateDirectories(folderPath).Concat(
-                        Directory.EnumerateFiles(folderPath)).Select(FileSystemEntry.CreateEntry)
-                             .ToArray()
+                Content = Directory.EnumerateDirectories(folderPath)
+                                   .Concat(Directory.EnumerateFiles(folderPath))
+                                   .Select(p => new FileSystemEntry(p)).ToArray()
             };
         }
 
-        private static FolderEntry GetParent(FileSystemEntry entry)
+        private static FileSystemEntry GetParent(FileSystemEntry entry)
         {
             if (entry.IsRoot()) return null;
 
             var parentFolder = Path.GetDirectoryName(entry.FullPath);
-            return (FolderEntry)(string.IsNullOrEmpty(parentFolder)
-                                     ? FileSystemEntry.Root : FileSystemEntry.CreateEntry(parentFolder));
+            return string.IsNullOrEmpty(parentFolder)
+                       ? FileSystemEntry.Root : new FileSystemEntry(parentFolder);
         }
 
         private static FolderContent GetRootContent()
             => new FolderContent
             {
                 Parent = null,
-                Folder = (FolderEntry)FileSystemEntry.Root,
-                Content =
-                    Directory.GetLogicalDrives().Where(Directory.Exists).Select(FileSystemEntry.CreateEntry).ToArray
-                        ()
+                Folder = FileSystemEntry.Root,
+                Content = Directory.GetLogicalDrives()
+                                   .Where(Directory.Exists)
+                                   .Select(p => new FileSystemEntry(p)).ToArray()
             };
         #endregion
     }

@@ -12,45 +12,47 @@ namespace RemoteExplorerInfrastructure
 
 
         #region  Constructors & Destructor
-        protected FileSystemEntry(string path)
+        public FileSystemEntry(string path)
         {
             if (path == null)
             {
                 throw new ArgumentNullException(nameof(path));
             }
-            if (path == "" || Directory.Exists(path))
+
+            FullPath = path;
+
+            if (path == ROOT_PATH)
             {
-                return new FolderEntry(path);
+                Name = ROOT_PATH;
+                Kind = FileSystemKind.Folder;
+                return;
             }
+            
             if (File.Exists(path))
             {
-                return new FileEntry(path);
+                Name = Path.GetFileName(path);
+                Kind = FileSystemKind.File;
+                return;
+            }
+
+            if (Directory.Exists(path))
+            {
+                var dirInfo = new DirectoryInfo(path);
+                Name = dirInfo.Parent == null ? FullPath : dirInfo.Name;
+                Kind = FileSystemKind.Folder;
+                return;
             }
             throw new FileNotFoundException(path);
-            FullPath = fullPath;
-
-            if (File.Exists(fullPath))
-            {
-                Name = Path.GetFileName(fullPath);
-            }
-            else if (Directory.Exists(fullPath))
-            {
-                var dirInfo = new DirectoryInfo(fullPath);
-                Name = dirInfo.Parent == null ? FullPath : dirInfo.Name;
-            }
         }
 
-        protected FileSystemEntry() { }
+        public FileSystemEntry() { }
         #endregion
 
 
         #region  Properties & Indexers
         public static FileSystemEntry Root { get; } = new FileSystemEntry(ROOT_PATH);
         public string FullPath { get; set; }
-
-        public virtual bool IsFileEntry { get; set; } = false;
-
-        public virtual bool IsFolderEntry { get; set; } = false;
+        public FileSystemKind Kind { get; set; }
         public string Name { get; set; }
         #endregion
 

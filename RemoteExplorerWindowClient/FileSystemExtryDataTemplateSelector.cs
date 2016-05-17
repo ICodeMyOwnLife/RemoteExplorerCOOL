@@ -12,7 +12,7 @@ namespace RemoteExplorerWindowClient
         {
             var element = container as FrameworkElement;
             var fileSystemEntry = item as FileSystemEntry;
-            return fileSystemEntry?.IsFileEntry == true ? element?.FindResource("FileEntryDataTemplate") as DataTemplate
+            return fileSystemEntry?.Kind == FileSystemKind.File ? element?.FindResource("FileEntryDataTemplate") as DataTemplate
                        : element?.FindResource("FolderEntryDataTemplate") as DataTemplate;
         }
         #endregion

@@ -12,7 +12,7 @@ namespace RemoteExplorerWindowClient
     {
         #region Fields
         private FolderContent _folderContent;
-        private FileSystemEntry _selectedEntry = FileSystemEntry.CreateEntry("");
+        private FileSystemEntry _selectedEntry = FileSystemEntry.Root;
         #endregion
 
 
@@ -53,7 +53,7 @@ namespace RemoteExplorerWindowClient
         public async Task OpenEntryAsync(FileSystemEntry entry)
         {
             if ((entry = entry ?? SelectedEntry) == null) return;
-            if (entry.IsFileEntry) await OpenFileAsync(entry);
+            if (entry.Kind == FileSystemKind.File) await OpenFileAsync(entry);
             else await OpenFolderAsync(entry);
         }
 

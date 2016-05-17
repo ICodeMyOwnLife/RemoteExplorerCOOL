@@ -70,6 +70,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="FileSystemEntry.cs" />
+    <Compile Include="FileSystemKind.cs" />
     <Compile Include="FolderContent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RemoteExplorerConfig.cs" />
