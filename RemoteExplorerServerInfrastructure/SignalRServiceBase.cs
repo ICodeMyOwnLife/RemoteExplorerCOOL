@@ -79,3 +79,6 @@ namespace RemoteExplorerServerInfrastructure
         #endregion
     }
 }
+
+
+// TODO: Use 192.168.x.x
