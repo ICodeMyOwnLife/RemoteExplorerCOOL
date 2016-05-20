@@ -27,8 +27,8 @@ namespace RemoteExplorerWindowClient
 
         #region  Properties & Indexers
         public ICommand ConnectAsyncCommand { get; }
-
         public ICommand DisconnectCommand { get; }
+        public NotificationRequestProvider NotificationRequestProvider { get; } = new NotificationRequestProvider();
         #endregion
 
 
@@ -41,7 +41,7 @@ namespace RemoteExplorerWindowClient
         #region Event Handlers
         private void Proxy_Error(object sender, string e)
         {
-            NotifyError(e);
+            NotificationRequestProvider.NotifyError(e);
         }
         #endregion
     }

@@ -69,3 +69,6 @@ namespace RemoteExplorerClientInfrastructure
         #endregion
     }
 }
+
+
+// TODO: CanConnect, CanDisconnect
